@@ -1,0 +1,3 @@
+General Notes
+
+HAPI comes with server APIs but they are designed for a relational database. I think it wants you to read FHIR files and create the database yourself? I'll create my own noSQL database and just save the FHIR files (i think)
