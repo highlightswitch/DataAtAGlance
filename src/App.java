@@ -8,10 +8,8 @@ import com.mongodb.client.MongoIterable;
 import org.bson.Document;
 import org.hl7.fhir.r4.model.Patient;
 
-import java.util.Collections;
-
-import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.text;
 
 public class App {
 
@@ -22,8 +20,9 @@ public class App {
 
 		//Try to focus on storage and server first.
 		// String json = getJSONofF001();
-		Patient f001 = findPatientsByName("Pieter");
-		System.out.println(f001);
+		Patient f001 = findPatientsByName("van");
+		if(f001 != null)
+			System.out.println(f001.getName().get(0).getGivenAsSingleString());
 
 		MONGO().close();
 
@@ -39,11 +38,9 @@ public class App {
 		MongoDatabase database = mongoClient.getDatabase("testDatabase");
 		MongoCollection<Document> collection = database.getCollection("people");
 
-		MongoIterable<Document> docs = collection.aggregate(
-				Collections.singletonList(match(eq("name.given", "Pieter")))
-		);
+		MongoIterable<Document> docs = collection.find(text(name));
 
-		return parsePatient(docs.first().toJson());
+		return docs.first() == null ? null : parsePatient(docs.first().toJson());
 
 	}
 
