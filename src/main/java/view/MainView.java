@@ -1,6 +1,8 @@
 package view;
 
 import controller.ViewController;
+import model.ObservationData;
+import org.hl7.fhir.r4.model.Observation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +26,9 @@ public class MainView extends AppView {
 
 		JPanel panel = new JPanel(new GridLayout(1,2));
 		// panel.add(new JLabel("Logged in as: " + vc.getLoggedInPatient().getName().get(0).getNameAsSingleString()));
+
+		for(Observation obs : vc.getRetrievedObservations())
+			obPanel.addObservation(new ObservationData(obs));
 
 		panel.add(obPanel);
 		panel.add(tPanel);

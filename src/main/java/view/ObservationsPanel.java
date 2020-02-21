@@ -1,30 +1,29 @@
 package view;
 
+import model.ObservationData;
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class ObservationsPanel extends JPanel {
 
-	private List<ObservationListElement> elements;
+	private DefaultListModel<ObservationListElement> listModel;
 
 	public ObservationsPanel(){
 
 		this.setLayout(new BorderLayout());
 
-		JList<ObservationListElement> jList = new JList<>(getListModel());
+		this.listModel = new DefaultListModel<>();
+
+		JList<ObservationListElement> jList = new JList<>(listModel);
 		jList.setCellRenderer(ObservationListElement.getListCellRenderer());
 
 		JScrollPane scrollPane = new JScrollPane(jList);
 		this.add(scrollPane);
 	}
 
-	private ListModel<ObservationListElement> getListModel(){
-		DefaultListModel<ObservationListElement> model = new DefaultListModel<>();
-		model.addElement(new ObservationListElement());
-		model.addElement(new ObservationListElement());
-		model.addElement(new ObservationListElement());
-		return model;
+	public void addObservation(ObservationData obs){
+		listModel.addElement(new ObservationListElement(obs));
 	}
 
 }

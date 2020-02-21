@@ -1,6 +1,7 @@
 package controller;
 
 import model.Model;
+import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import view.*;
 
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 
 public class ViewController {
@@ -93,6 +95,10 @@ public class ViewController {
 
 	public Patient getLoggedInPatient(){
 		return model.getLoggedInPatient();
+	}
+
+	public List<Observation> getRetrievedObservations( ){
+		return model.getRetrievedObservations();
 	}
 
 	public ActionListener getActionListener(String type) {
