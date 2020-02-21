@@ -87,12 +87,12 @@ public class App {
 	}
 
 	private void test(){
-
-		try{
-			Object obj = CONTEXT().newJsonParser().parseResource(new FileInputStream(new File("Allie437_Powlowski563_0100411a-6826-40d8-bfc7-baba56c9945b.json")));
-			System.out.println();
-		}catch(FileNotFoundException e){
-			e.printStackTrace();
-		}
+		//
+		// try{
+		// 	Object obj = CONTEXT().newJsonParser().parseResource(new FileInputStream(new File("Allie437_Powlowski563_0100411a-6826-40d8-bfc7-baba56c9945b.json")));
+		// 	System.out.println();
+		// }catch(FileNotFoundException e){
+		// 	e.printStackTrace();
+		// }
 	}
 }

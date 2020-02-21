@@ -1,5 +1,7 @@
 package view;
 
+import controller.ViewController;
+
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -8,10 +10,13 @@ public class TableView implements AppView {
 	private JPanel panel;
 	private JMenuBar menuBar;
 
+	private ViewController vc;
 
-	public TableView( ){
+	public TableView(ViewController vc){
+		this.vc = vc;
+
 		this.panel = new JPanel();
-		this.panel.add(new JLabel("dfgs"));
+		this.panel.add(new JLabel("Logged in as: " + vc.getLoggedInPatient().getName().get(0).getNameAsSingleString()));
 	}
 
 	public JPanel getPanel( ){

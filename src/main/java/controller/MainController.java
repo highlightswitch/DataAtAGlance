@@ -14,15 +14,17 @@ public class MainController {
 	private Model model;
 	private ViewController view;
 
+	private final String defaultPatientID = "urn:uuid:284dac2a-bc05-4633-84b5-21cd31b9fc70";
+
 	private MainController(){
 
 		//Create model
 		this.model = new Model();
 		this.view = new ViewController(model, "defaultUsername");
 
-		if(ensureMongoAtlasConnection()){
+		if(DatabaseController.ensureDatabaseConnection()){
 			setupShutdownHook();
-
+			this.view.start();
 
 		} else {
 			System.out.println("----");
@@ -30,15 +32,6 @@ public class MainController {
 			System.out.println("----");
 		}
 
-	}
-
-	private boolean ensureMongoAtlasConnection(){
-		try{
-			DB.get();
-		} catch(ExceptionInInitializerError e){
-			return false;
-		}
-		return true;
 	}
 
 	private void setupShutdownHook( ){
