@@ -3,20 +3,33 @@ package view;
 import controller.ViewController;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class MainView extends AppView {
 
 	private ViewController vc;
 
+	private ObservationsPanel obPanel;
+	private TablePanel tPanel;
+
 	public MainView(ViewController vc){
 		this.vc = vc;
+		this.obPanel = new ObservationsPanel();
+		this.tPanel = new TablePanel();
 	}
 
 	public JPanel makePanel(){
 		vc.getFrame().setJMenuBar(makeMenuBar());
-		JPanel panel = new JPanel();
-		panel.add(new JLabel("Logged in as: " + vc.getLoggedInPatient().getName().get(0).getNameAsSingleString()));
+
+		JPanel panel = new JPanel(new GridLayout(1,2));
+		// panel.add(new JLabel("Logged in as: " + vc.getLoggedInPatient().getName().get(0).getNameAsSingleString()));
+
+		panel.add(obPanel);
+		panel.add(tPanel);
+
+
+		// panel.setMinimumSize(new Dimension(700, 500));
 
 		return panel;
 	}

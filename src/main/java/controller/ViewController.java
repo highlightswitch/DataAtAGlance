@@ -61,7 +61,6 @@ public class ViewController {
 		frame.pack();
 		frame.setVisible(true);
 
-		frame.setMinimumSize(new Dimension(550, 650));
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
@@ -76,9 +75,11 @@ public class ViewController {
 		switch(currentView){
 			case LOGIN:
 				frame.setJMenuBar(null);
+				frame.setMinimumSize(new Dimension(300, 500));
 				drawFrame(new LoginView(this, defaultUserName));
 				break;
 			case MAIN:
+				frame.setMinimumSize(new Dimension(800, 600));
 				drawFrame(new MainView(this));
 				break;
 		}
