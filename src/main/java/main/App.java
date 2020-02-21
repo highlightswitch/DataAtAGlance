@@ -11,6 +11,10 @@ import controller.MainController;
 import org.bson.Document;
 import org.hl7.fhir.r4.model.Patient;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 
@@ -25,6 +29,7 @@ public class App {
 
 	private App(){
 		MainController.get();
+		// test();
 	}
 
 	// private void oldCode(){
@@ -81,6 +86,13 @@ public class App {
 		return _CONTEXT;
 	}
 
+	private void test(){
 
-
+		try{
+			Object obj = CONTEXT().newJsonParser().parseResource(new FileInputStream(new File("Allie437_Powlowski563_0100411a-6826-40d8-bfc7-baba56c9945b.json")));
+			System.out.println();
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+	}
 }

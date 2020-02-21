@@ -12,23 +12,38 @@ public class MainController {
 	}
 
 	private Model model;
+	private ViewController view;
 
 	private MainController(){
 
 		//Create model
 		this.model = new Model();
+		this.view = new ViewController(model, "defaultUsername");
 
-		//Setup connection with DB
-		connectToMongoAtlas();
+		if(ensureMongoAtlasConnection()){
+			setupShutdownHook();
 
-		//Create view
 
+		} else {
+			System.out.println("----");
+			System.out.println("ERR - Could not connect to database");
+			System.out.println("----");
+		}
 
 	}
 
-	private void connectToMongoAtlas(){
-		System.out.println(DB.get().listCollectionNames().first());
+	private boolean ensureMongoAtlasConnection(){
+		try{
+			DB.get();
+		} catch(ExceptionInInitializerError e){
+			return false;
+		}
+		return true;
+	}
 
+	private void setupShutdownHook( ){
+		//On shutdown, close database connection
+		Runtime.getRuntime().addShutdownHook(new Thread(DB::close));
 	}
 
 }

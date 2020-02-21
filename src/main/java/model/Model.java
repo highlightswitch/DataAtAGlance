@@ -10,4 +10,7 @@ public class Model {
 
 	}
 
+	public void login( ){
+
+	}
 }

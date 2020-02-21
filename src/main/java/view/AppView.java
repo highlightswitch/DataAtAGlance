@@ -2,7 +2,7 @@ package view;
 
 import javax.swing.*;
 
-interface AppView {
+public interface AppView {
 
 	JPanel getPanel();
 
