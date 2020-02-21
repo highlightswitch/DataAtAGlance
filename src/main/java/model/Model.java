@@ -2,6 +2,7 @@ package model;
 
 import ca.uhn.fhir.context.FhirContext;
 import controller.DatabaseController;
+import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Patient;
 
 public class Model {
@@ -15,8 +16,13 @@ public class Model {
 
 	}
 
-	public Patient login( ){
+	public Patient login(){
 		this.loadDefaultPatient();
+		return currentLoggedInPatient;
+	}
+
+	public Patient fakeLogin(){
+		currentLoggedInPatient = new Patient().addName(new HumanName().addPrefix("Mr.").addGiven("Elliot").setFamily("Alderson"));
 		return currentLoggedInPatient;
 	}
 

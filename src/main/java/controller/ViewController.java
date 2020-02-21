@@ -6,6 +6,9 @@ import view.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 public class ViewController {
@@ -16,10 +19,14 @@ public class ViewController {
 	private JFrame frame;
 	private ViewType currentView = null;
 
+	private MenuActionListener menu;
+
 	ViewController(Model model, String defaultUserName){
 
 		this.model = model;
 		this.defaultUserName = defaultUserName;
+
+		this.menu = new MenuActionListener();
 
 		// frame.getContentPane().add(new JTable(new Object[][]{{"Joe", "Briggs"},{"Kathy", "Smith"}}, new String[]{"First Name", "Family Name"}));
 	}
@@ -29,10 +36,26 @@ public class ViewController {
 		switchView(ViewType.LOGIN);
 	}
 
+	public void startWithFakeLogin(){
+		frame = new JFrame("Data at a Glance");
+		model.fakeLogin();
+		switchView(ViewType.MAIN);
+	}
+
 
 	private void drawFrame(AppView view){
 
 		JPanel activePanel = view.getPanel();
+
+		//TODO: Remove before submission
+		frame.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e){
+				if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+					System.exit(0);
+				}
+			}
+		});
 
 		frame.setContentPane(activePanel);
 		frame.pack();
@@ -40,6 +63,10 @@ public class ViewController {
 
 		frame.setMinimumSize(new Dimension(550, 650));
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	}
+
+	public JFrame getFrame( ){
+		return frame;
 	}
 
 	public void switchView(ViewType currentView){
@@ -51,7 +78,7 @@ public class ViewController {
 				drawFrame(new LoginView(this, defaultUserName));
 				break;
 			case MAIN:
-				drawFrame(new TableView(this));
+				drawFrame(new MainView(this));
 				break;
 		}
 
@@ -65,4 +92,11 @@ public class ViewController {
 	public Patient getLoggedInPatient(){
 		return model.getLoggedInPatient();
 	}
+
+	public ActionListener getActionListener(String type) {
+		if(type.equals("Menu"))
+			return menu;
+		return (e -> System.out.println("Cannot find type"));
+	}
+
 }

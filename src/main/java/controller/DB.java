@@ -17,6 +17,7 @@ class DB {
 
 	static void close(){
 		if(_MONGO != null){
+			System.out.println("xcgvs");
 			_MONGO.close();
 			_MONGO = null;
 		}
