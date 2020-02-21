@@ -45,10 +45,9 @@ public class Model {
 
 		List<String> docs = DatabaseController.getAllObservationsBySubjectID(defaultPatientID);
 		for(String obsJson : docs){
+			//TODO: Change this to omit category:survey instead of text for smoking
 			Observation obs = parser.parseResource(Observation.class, obsJson);
-			if(obs.getCode().getText().equals("Tobacco smoking status NHIS"))
-				System.out.println("Smoking ommited");
-			else
+			if(!obs.getCode().getText().equals("Tobacco smoking status NHIS"))
 				retrievedObservations.add(obs);
 		}
 	}
