@@ -75,6 +75,7 @@ public class ViewController {
 
 		switch(currentView){
 			case LOGIN:
+				frame.setJMenuBar(null);
 				drawFrame(new LoginView(this, defaultUserName));
 				break;
 			case MAIN:

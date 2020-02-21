@@ -5,7 +5,7 @@ import controller.ViewController;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class MainView implements AppView {
+public class MainView extends AppView {
 
 	private ViewController vc;
 
@@ -13,9 +13,9 @@ public class MainView implements AppView {
 		this.vc = vc;
 	}
 
-	public JPanel getPanel(){
-		JPanel panel = new JPanel();
+	public JPanel makePanel(){
 		vc.getFrame().setJMenuBar(makeMenuBar());
+		JPanel panel = new JPanel();
 		panel.add(new JLabel("Logged in as: " + vc.getLoggedInPatient().getName().get(0).getNameAsSingleString()));
 
 		return panel;

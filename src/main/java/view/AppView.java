@@ -2,8 +2,16 @@ package view;
 
 import javax.swing.*;
 
-public interface AppView {
+public abstract class AppView {
 
-	JPanel getPanel();
+	private JPanel panel;
+
+	public JPanel getPanel(){
+		if(this.panel == null)
+			this.panel = makePanel();
+		return this.panel;
+	}
+
+	protected abstract JPanel makePanel();
 
 }
