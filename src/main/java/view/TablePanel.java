@@ -20,7 +20,7 @@ public class TablePanel extends JPanel {
 		dataset.addValue( 240 , "bpm" , "2010" );
 		dataset.addValue( 300 , "bpm" , "2014" );
 
-		JFreeChart chart = ChartFactory.createLineChart("Heart Rate", "Date", "Beats pe minute", dataset);
+		JFreeChart chart = ChartFactory.createLineChart("Heart Rate", "Date", "Beats per minute", dataset);
 
 		JPanel panel = new ChartPanel(chart);
 		panel.setPreferredSize(new Dimension(400, 600));
