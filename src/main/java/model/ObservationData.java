@@ -44,4 +44,8 @@ public class ObservationData {
 		}
 	}
 
+	public String getDateString(){
+		return observation.getEffectiveDateTimeType().getValue().toString();
+	}
+
 }

@@ -98,7 +98,7 @@ public class ViewController {
 	}
 
 	public List<Observation> getRetrievedObservations( ){
-		return model.getRetrievedObservations();
+		return model.getRetrievedObservationsAsIs();
 	}
 
 	public ActionListener getActionListener(String type) {

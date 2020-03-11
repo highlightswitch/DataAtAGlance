@@ -61,6 +61,8 @@ public class ObservationsPanel extends JPanel {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("<html>");
+			sb.append(value.getDateString());
+			sb.append("<br/");
 			sb.append(value.getCodeString()[0]);
 			sb.append("<br/");
 			sb.append(value.getValueString()[0]);

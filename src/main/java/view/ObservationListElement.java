@@ -18,4 +18,8 @@ public class ObservationListElement {
 		return data.getValueString();
 	}
 
+	public String getDateString(){
+		return data.getDateString();
+	}
+
 }
