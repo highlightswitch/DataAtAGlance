@@ -30,6 +30,9 @@ public class MainView extends AppView {
 		for(Observation obs : vc.getRetrievedObservations())
 			obPanel.addObservation(new ObservationData(obs));
 
+		for(Observation obs : vc.getRetrievedObservations())
+			tPanel.addObservation(obs);
+
 		panel.add(obPanel);
 		panel.add(tPanel);
 

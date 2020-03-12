@@ -73,8 +73,19 @@ public class Model {
 		retrievedObservations.sort(byMostRecent);
 	}
 
-	public List<Observation> getRetrievedObservationsAsIs( ){
+	public List<Observation> getAllRetrievedObservations( ){
 		return retrievedObservations;
+	}
+
+	public List<Observation> getObservationsByLoincCode(String code){
+		List<Observation> list = new ArrayList<>();
+		for(Observation obs : retrievedObservations){
+			for(Coding coding : obs.getCode().getCoding()){
+				if(coding.getSystem().equals("http://loinc.org") && coding.getCode().equals(code))
+					list.add(obs);
+			}
+		}
+		return list;
 	}
 
 	private static class MostRecentComparator implements Comparator<Observation> {

@@ -98,7 +98,8 @@ public class ViewController {
 	}
 
 	public List<Observation> getRetrievedObservations( ){
-		return model.getRetrievedObservationsAsIs();
+		// return model.getObservationsByLoincCode("85354-9"); // Blood Pressure
+		return model.getObservationsByLoincCode("29463-7"); // Body Weight
 	}
 
 	public ActionListener getActionListener(String type) {
