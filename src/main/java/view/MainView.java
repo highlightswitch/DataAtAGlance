@@ -1,6 +1,7 @@
 package view;
 
 import controller.ViewController;
+import model.ObservationData;
 
 import javax.swing.*;
 import java.awt.*;

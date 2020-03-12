@@ -1,5 +1,7 @@
 package view;
 
+import model.ObservationData;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -14,9 +16,9 @@ public class ObservationsPanel extends JPanel {
 	private MainView mainView;
 
 	private DefaultListModel<ObservationData> listModel;
-	private final static String MOST_RECENT = "Most Recent";
-	private final static String FILTERED = "Filtered";
-	private final static String FAVOURITES = "Favourites";
+	private final static String               MOST_RECENT = "Most Recent";
+	private final static String               FILTERED = "Filtered";
+	private final static String               FAVOURITES = "Favourites";
 
 	private JPanel cards;
 

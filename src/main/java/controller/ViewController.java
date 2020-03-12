@@ -1,7 +1,7 @@
 package controller;
 
 import model.Model;
-import view.ObservationData;
+import model.ObservationData;
 import model.ObservationDataImpl;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;

@@ -1,7 +1,6 @@
 package model;
 
 import org.hl7.fhir.r4.model.Observation;
-import view.ObservationData;
 
 import java.util.ArrayList;
 import java.util.HashSet;
