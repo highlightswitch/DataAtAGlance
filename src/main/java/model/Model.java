@@ -29,7 +29,7 @@ public class Model {
 
 	public Patient fakeLogin(){
 		currentLoggedInPatient = new Patient().addName(new HumanName().addPrefix("Mr.").addGiven("Elliot").setFamily("Alderson"));
-		addFakeObservations(4);
+		addFakeObservations(20);
 		return currentLoggedInPatient;
 	}
 
@@ -37,7 +37,7 @@ public class Model {
 		for(int i = 0; i < quantity; i++){
 			Observation obs = new Observation();
 			obs.setCode(new CodeableConcept().setText("Body Height"));
-			obs.setValue(new Quantity().setValue(180 + i).setUnit("cm"));
+			obs.setValue(new Quantity().setValue(181 + i).setUnit("cm"));
 			obs.setEffective(new DateTimeType(new Date(2020, Calendar.JANUARY, 1 + i)));
 			allCurrentPatientObservations.add(obs);
 		}

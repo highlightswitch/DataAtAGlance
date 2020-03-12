@@ -5,6 +5,7 @@ import controller.ViewController;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class MainView extends AppView {
 
@@ -15,7 +16,7 @@ public class MainView extends AppView {
 
 	public MainView(ViewController vc){
 		this.vc = vc;
-		this.obPanel = new ObservationsPanel();
+		this.obPanel = new ObservationsPanel(this);
 		this.tPanel = new TablePanel();
 	}
 
@@ -23,8 +24,6 @@ public class MainView extends AppView {
 		vc.getFrame().setJMenuBar(makeMenuBar());
 
 		JPanel panel = new JPanel(new GridLayout(1,2));
-
-		updateObservationPanelData();
 
 		panel.add(obPanel);
 		panel.add(tPanel);
@@ -55,9 +54,8 @@ public class MainView extends AppView {
 		return menuBar;
 	}
 
-	void updateObservationPanelData(){
-		for(ObservationData data : vc.getObsDataForPanel())
-			obPanel.addObservation(data);
+	Set<ObservationData> getAllObservationsSortedByMostRecent(){
+		return vc.getAllObsData();
 	}
 
 }

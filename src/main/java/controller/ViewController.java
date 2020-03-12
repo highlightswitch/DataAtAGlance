@@ -105,11 +105,11 @@ public class ViewController {
 
 	public Set<Observation> getRetrievedObservations( ){
 		// return model.getObservationsByLoincCode("85354-9"); // Blood Pressure
-		return model.getObservationsByLoincCode("29463-7"); // Body Weight
-		// return model.getAllRetrievedObservations();
+		// return model.getObservationsByLoincCode("29463-7"); // Body Weight
+		return model.getAllRetrievedObservations();
 	}
 
-	public Set<ObservationData> getObsDataForPanel(){
+	public Set<ObservationData> getAllObsData(){
 		Set<ObservationData> data = new HashSet<>();
 		for(Observation obs : getRetrievedObservations())
 			data.add(new ObservationDataImpl(obs));

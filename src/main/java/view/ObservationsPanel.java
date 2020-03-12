@@ -3,41 +3,110 @@ package view;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class ObservationsPanel extends JPanel {
 
+	private MainView mainView;
+
 	private DefaultListModel<ObservationData> listModel;
+	private final static String MOST_RECENT = "Most Recent";
+	private final static String CATEGORY = "Category";
+	private final static String FAVOURITES = "Favourites";
 
-	public ObservationsPanel(){
-		this.setLayout(new BorderLayout());
-		createViewDropDownPanel();
-		createObservationList();
-	}
+	private JPanel cards;
 
-	private void createViewDropDownPanel(){
-		JPanel panel = new JPanel();
+	public ObservationsPanel(MainView mainView){
 
-		String[] viewTypes = { "Most Recent", "Category", "Favourites" };
-		JComboBox<String> comboBox = new JComboBox<>(viewTypes);
-
-		panel.add(comboBox);
-		this.add(comboBox, BorderLayout.PAGE_START);
-	}
-
-	public void createObservationList(){
-
+		this.mainView = mainView;
 		this.listModel = new DefaultListModel<>();
+		updateListModelToMostRecent();
+
+		this.setLayout(new BorderLayout());
+
+		this.cards = new JPanel(new CardLayout());
+		cards.add(createMostRecentPanel(), MOST_RECENT);
+		cards.add(createCategoryPanel(), CATEGORY);
+		cards.add(createFavouritesPanel(), FAVOURITES);
+
+		this.add(createComboBoxPanel(), BorderLayout.PAGE_START);
+		this.add(cards);
+	}
+
+	private JPanel createComboBoxPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+
+		String[] comboBoxItems = { MOST_RECENT, CATEGORY, FAVOURITES };
+		JComboBox<String> comboBox = new JComboBox<>(comboBoxItems);
+		comboBox.setEditable(false);
+
+		comboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e){
+				String cardShowing =  (String) e.getItem();
+				switch(cardShowing){
+					case MOST_RECENT:
+						updateListModelToMostRecent();
+						break;
+					case CATEGORY:
+						break;
+					case FAVOURITES:
+						break;
+					default:
+						System.out.println("ERROR with comboBox");
+				}
+				CardLayout cardLayout = (CardLayout) cards.getLayout();
+				cardLayout.show(cards, (String) e.getItem());
+			}
+		});
+
+		panel.add(comboBox, BorderLayout.PAGE_START);
+		return panel;
+	}
+
+	private JPanel createMostRecentPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(createObservationList());
+		return panel;
+	}
+
+	private JPanel createCategoryPanel(){
+		JPanel panel = new JPanel();
+		panel.add(new JLabel("Category Panel Here"));
+		panel.setBorder(new LineBorder(Color.BLUE));
+		return panel;
+	}
+
+	private JPanel createFavouritesPanel(){
+		JPanel panel = new JPanel();
+		panel.add(new JLabel("Favourites Panel Here"));
+		panel.setBorder(new LineBorder(Color.BLUE));
+		return panel;
+	}
+
+	public JScrollPane createObservationList(){
+
 		JList<ObservationData> jList = new JList<>(listModel);
 		jList.setCellRenderer(new ObservationListCellRenderer());
 
 		JScrollPane scrollPane = new JScrollPane(jList);
 		scrollPane.setBorder(new EmptyBorder(10,10,10,10));
-		this.add(scrollPane);
+		return scrollPane;
 	}
 
 	public void addObservation(ObservationData obs){
 		listModel.addElement(obs);
+	}
+
+	public void updateListModelToMostRecent(){
+		listModel.removeAllElements();
+		for(ObservationData data : mainView.getAllObservationsSortedByMostRecent()){
+			listModel.addElement(data);
+		}
+		// listModel.addAll(mainView.getAllObservationsSortedByMostRecent());
 	}
 
 	private static class ObservationListCellRenderer extends JLabel implements ListCellRenderer<ObservationData> {
