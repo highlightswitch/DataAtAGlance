@@ -25,7 +25,7 @@ public class LoginView extends AppView {
 		loginButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent){
-				vc.login();
+				vc.loginButtonPressed();
 			}
 		});
 		panel.add(loginButton, BorderLayout.CENTER);

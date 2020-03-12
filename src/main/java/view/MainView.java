@@ -1,8 +1,6 @@
 package view;
 
 import controller.ViewController;
-import model.ObservationData;
-import org.hl7.fhir.r4.model.Observation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,19 +23,11 @@ public class MainView extends AppView {
 		vc.getFrame().setJMenuBar(makeMenuBar());
 
 		JPanel panel = new JPanel(new GridLayout(1,2));
-		// panel.add(new JLabel("Logged in as: " + vc.getLoggedInPatient().getName().get(0).getNameAsSingleString()));
 
-		for(Observation obs : vc.getRetrievedObservations())
-			obPanel.addObservation(new ObservationData(obs));
-
-		for(Observation obs : vc.getRetrievedObservations())
-			tPanel.addObservation(obs);
+		updateObservationPanelData();
 
 		panel.add(obPanel);
 		panel.add(tPanel);
-
-
-		// panel.setMinimumSize(new Dimension(700, 500));
 
 		return panel;
 	}
@@ -63,6 +53,11 @@ public class MainView extends AppView {
 		menuBar.add(mMenu);
 
 		return menuBar;
+	}
+
+	void updateObservationPanelData(){
+		for(ObservationData data : vc.getObsDataForPanel())
+			obPanel.addObservation(data);
 	}
 
 }

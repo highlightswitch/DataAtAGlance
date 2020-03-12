@@ -1,16 +1,22 @@
 package controller;
 
 import model.Model;
+import view.ObservationData;
+import model.ObservationDataImpl;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
-import view.*;
+import view.AppView;
+import view.LoginView;
+import view.MainView;
+import view.ViewType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class ViewController {
@@ -88,7 +94,7 @@ public class ViewController {
 
 	}
 
-	public void login(){
+	public void loginButtonPressed(){
 		model.login();
 		switchView(ViewType.MAIN);
 	}
@@ -97,9 +103,17 @@ public class ViewController {
 		return model.getLoggedInPatient();
 	}
 
-	public List<Observation> getRetrievedObservations( ){
+	public Set<Observation> getRetrievedObservations( ){
 		// return model.getObservationsByLoincCode("85354-9"); // Blood Pressure
 		return model.getObservationsByLoincCode("29463-7"); // Body Weight
+		// return model.getAllRetrievedObservations();
+	}
+
+	public Set<ObservationData> getObsDataForPanel(){
+		Set<ObservationData> data = new HashSet<>();
+		for(Observation obs : getRetrievedObservations())
+			data.add(new ObservationDataImpl(obs));
+		return data;
 	}
 
 	public ActionListener getActionListener(String type) {

@@ -1,7 +1,5 @@
 package view;
 
-import model.ObservationData;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -9,11 +7,9 @@ import java.awt.*;
 
 public class ObservationsPanel extends JPanel {
 
-	private DefaultListModel<ObservationListElement> listModel;
+	private DefaultListModel<ObservationData> listModel;
 
 	public ObservationsPanel(){
-
-		// this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setLayout(new BorderLayout());
 		createViewDropDownPanel();
 		createObservationList();
@@ -32,7 +28,7 @@ public class ObservationsPanel extends JPanel {
 	public void createObservationList(){
 
 		this.listModel = new DefaultListModel<>();
-		JList<ObservationListElement> jList = new JList<>(listModel);
+		JList<ObservationData> jList = new JList<>(listModel);
 		jList.setCellRenderer(new ObservationListCellRenderer());
 
 		JScrollPane scrollPane = new JScrollPane(jList);
@@ -41,10 +37,10 @@ public class ObservationsPanel extends JPanel {
 	}
 
 	public void addObservation(ObservationData obs){
-		listModel.addElement(new ObservationListElement(obs));
+		listModel.addElement(obs);
 	}
 
-	private static class ObservationListCellRenderer extends JLabel implements ListCellRenderer<ObservationListElement> {
+	private static class ObservationListCellRenderer extends JLabel implements ListCellRenderer<ObservationData> {
 
 		public ObservationListCellRenderer(){
 			setOpaque(true);
@@ -52,8 +48,8 @@ public class ObservationsPanel extends JPanel {
 
 		@Override
 		public Component getListCellRendererComponent(
-				JList<? extends ObservationListElement> list,
-				ObservationListElement value, int index,
+				JList<? extends ObservationData> list,
+				ObservationData value, int index,
 				boolean isSelected, boolean cellHasFocus){
 
 			Border border = BorderFactory.createLineBorder(Color.GRAY);
