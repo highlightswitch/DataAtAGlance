@@ -21,6 +21,8 @@ public class ObservationsPanel extends JPanel {
 	private final static String               FILTERED = "Filtered";
 	private final static String               FAVOURITES = "Favourites";
 
+	private JLabel numOfItems = new JLabel();
+
 	private JPanel cards;
 
 	public ObservationsPanel(MainView mainView){
@@ -36,12 +38,19 @@ public class ObservationsPanel extends JPanel {
 		cards.add(createFilteredPanel(), FILTERED);
 		cards.add(createFavouritesPanel(), FAVOURITES);
 
-		this.add(createViewTypeComboBoxPanel(), BorderLayout.PAGE_START);
+		this.add(createTopPanel(), BorderLayout.PAGE_START);
 		this.add(cards);
 	}
 
-	private JPanel createViewTypeComboBoxPanel(){
+	private JPanel createTopPanel(){
 		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBorder(new EmptyBorder(5,5,5,5));
+
+		JPanel info = new JPanel();
+		info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+		info.add(new JLabel("Patient: " + mainView.getPatientName()));
+		info.add(numOfItems);
+		panel.add(info );
 
 		String[] comboBoxItems = { MOST_RECENT, FILTERED, FAVOURITES };
 		JComboBox<String> comboBox = new JComboBox<>(comboBoxItems);
@@ -65,7 +74,7 @@ public class ObservationsPanel extends JPanel {
 			cardLayout.show(cards, (String) e.getItem());
 		});
 
-		panel.add(comboBox, BorderLayout.PAGE_START);
+		panel.add(comboBox, BorderLayout.PAGE_END);
 		return panel;
 	}
 
@@ -125,6 +134,7 @@ public class ObservationsPanel extends JPanel {
 			listModel.addElement(data);
 			// System.out.println(data.getFilters());
 		}
+		numOfItems.setText("Number of items: " + listModel.size());
 		// listModel.addAll(mainView.getAllObservationsSortedByMostRecent());
 	}
 
@@ -141,7 +151,7 @@ public class ObservationsPanel extends JPanel {
 			if(data.getFilters().contains(category))
 				listModel.addElement(data);
 		}
-	}
+		numOfItems.setText("Number of items: " + listModel.size());	}
 
 	private static class ObservationListCellRenderer extends JLabel implements ListCellRenderer<ObservationData> {
 

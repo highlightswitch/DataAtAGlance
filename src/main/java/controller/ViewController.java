@@ -104,6 +104,10 @@ public class ViewController {
 		return model.getLoggedInPatient();
 	}
 
+	public String getPatientName(){
+		return model.getLoggedInPatient().getName().get(0).getNameAsSingleString();
+	}
+
 	public Set<Observation> getRetrievedObservations( ){
 		// return model.getObservationsByLoincCode("85354-9"); // Blood Pressure
 		// return model.getObservationsByLoincCode("29463-7"); // Body Weight

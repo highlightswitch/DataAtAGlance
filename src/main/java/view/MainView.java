@@ -55,6 +55,10 @@ public class MainView extends AppView {
 		return menuBar;
 	}
 
+	String getPatientName(){
+		return vc.getPatientName();
+	}
+
 	ObservationData[] getAllObservationsSortedByMostRecent(){
 		return vc.getAllObsData().toArray(new ObservationData[0]);
 	}
