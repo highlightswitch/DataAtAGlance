@@ -137,7 +137,7 @@ public class ObservationsPanel extends JPanel {
 		listModel.removeAllElements();
 		for(ObservationData data : mainView.getAllObservationsSortedByMostRecent()){
 			listModel.addElement(data);
-			System.out.println(Arrays.toString(data.getCodeNameString()) + " - " + Arrays.toString(data.getCodeString()));
+			// System.out.println(Arrays.toString(data.getCodeNameString()) + " - " + Arrays.toString(data.getCodeString()));
 		}
 		// listModel.addAll(mainView.getAllObservationsSortedByMostRecent());
 	}

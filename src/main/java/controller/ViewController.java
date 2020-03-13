@@ -15,7 +15,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -109,8 +110,8 @@ public class ViewController {
 		return model.getAllRetrievedObservations();
 	}
 
-	public Set<ObservationData> getAllObsData(){
-		Set<ObservationData> data = new HashSet<>();
+	public List<ObservationData> getAllObsData(){
+		List<ObservationData> data = new ArrayList<>();
 		for(Observation obs : getRetrievedObservations())
 			data.add(new ObservationDataImpl(obs));
 		return data;

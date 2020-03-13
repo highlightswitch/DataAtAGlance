@@ -6,7 +6,7 @@ import model.ObservationData;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 public class MainView extends AppView {
 
@@ -55,7 +55,7 @@ public class MainView extends AppView {
 		return menuBar;
 	}
 
-	Set<ObservationData> getAllObservationsSortedByMostRecent(){
+	List<ObservationData> getAllObservationsSortedByMostRecent(){
 		return vc.getAllObsData();
 	}
 
