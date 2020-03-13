@@ -1,5 +1,6 @@
 package model;
 
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
@@ -60,8 +61,12 @@ public class ObservationDataImpl implements ObservationData {
 			}
 		} else{
 			StringBuilder sb = new StringBuilder();
-			sb.append(obs.getValueQuantity().getValue().toString());
-			sb.append(obs.getValueQuantity().getUnit());
+			try{
+				sb.append(obs.getValueQuantity().getValue().toString());
+				sb.append(obs.getValueQuantity().getUnit());
+			} catch(FHIRException e){
+				e.printStackTrace();
+			}
 			valueString.add(sb.toString());
 		}
 	}

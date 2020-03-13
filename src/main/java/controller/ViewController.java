@@ -84,8 +84,8 @@ public class ViewController {
 		switch(currentView){
 			case LOGIN:
 				frame.setJMenuBar(null);
-				frame.setMinimumSize(new Dimension(300, 500));
-				drawFrame(new LoginView(this, defaultUserName));
+				frame.setMinimumSize(new Dimension(200, 300));
+				drawFrame(new LoginView(this, model.getAvailableUserNames()));
 				break;
 			case MAIN:
 				frame.setMinimumSize(new Dimension(800, 600));
@@ -95,8 +95,8 @@ public class ViewController {
 
 	}
 
-	public void loginButtonPressed(){
-		model.login();
+	public void loginButtonPressed(String userName){
+		model.login(userName);
 		switchView(ViewType.MAIN);
 	}
 

@@ -3,33 +3,37 @@ package view;
 import controller.ViewController;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Vector;
 
 public class LoginView extends AppView {
 
 	private ViewController vc;
-	private String defaultUserName;
+	private List<String> users;
 
-	public LoginView(ViewController vc, String defaultUserName){
+	public LoginView(ViewController vc, List<String> users){
 		this.vc = vc;
-		this.defaultUserName = defaultUserName;
+		this.users = users;
 	}
 
 	@Override
 	public JPanel makePanel(){
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createEmptyBorder(200, 200, 200, 200));
-		JButton loginButton = new JButton("Login as " + defaultUserName);
-		loginButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent){
-				vc.loginButtonPressed();
-			}
-		});
-		panel.add(loginButton, BorderLayout.CENTER);
-		return panel;
+		panel.setLayout(new BorderLayout());
+		panel.setBorder(new EmptyBorder(100, 40, 50, 40));
 
+		JPanel buttons = new JPanel(new GridLayout(2,1));
+
+		JComboBox<String> userComboBox = new JComboBox<>((Vector<String>) users);
+		buttons.add(userComboBox);
+
+		JButton loginButton = new JButton("Login");
+		loginButton.addActionListener(e -> vc.loginButtonPressed((String) userComboBox.getSelectedItem()));
+		buttons.add(loginButton);
+
+		panel.add(buttons, BorderLayout.PAGE_START);
+		return panel;
 	}
 }
