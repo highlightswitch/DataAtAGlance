@@ -55,8 +55,8 @@ public class MainView extends AppView {
 		return menuBar;
 	}
 
-	List<ObservationData> getAllObservationsSortedByMostRecent(){
-		return vc.getAllObsData();
+	ObservationData[] getAllObservationsSortedByMostRecent(){
+		return vc.getAllObsData().toArray(new ObservationData[0]);
 	}
 
 }

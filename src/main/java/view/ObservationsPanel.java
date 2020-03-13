@@ -7,9 +7,10 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ObservationsPanel extends JPanel {
 
@@ -46,26 +47,22 @@ public class ObservationsPanel extends JPanel {
 		JComboBox<String> comboBox = new JComboBox<>(comboBoxItems);
 		comboBox.setEditable(false);
 
-		comboBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e){
-				String cardShowing =  (String) e.getItem();
-				switch(cardShowing){
-					case MOST_RECENT:
-						updateListModelToMostRecent();
-						break;
-					case FILTERED:
-						updateListOfCategories();
-						updateListModelToCategory("");
-						break;
-					case FAVOURITES:
-						break;
-					default:
-						System.out.println("ERROR with comboBox");
-				}
-				CardLayout cardLayout = (CardLayout) cards.getLayout();
-				cardLayout.show(cards, (String) e.getItem());
+		comboBox.addItemListener(e -> {
+			String cardShowing =  (String) e.getItem();
+			switch(cardShowing){
+				case MOST_RECENT:
+					updateListModelToMostRecent();
+					break;
+				case FILTERED:
+					updateListModelToFilter("");
+					break;
+				case FAVOURITES:
+					break;
+				default:
+					System.out.println("ERROR with comboBox");
 			}
+			CardLayout cardLayout = (CardLayout) cards.getLayout();
+			cardLayout.show(cards, (String) e.getItem());
 		});
 
 		panel.add(comboBox, BorderLayout.PAGE_START);
@@ -102,56 +99,48 @@ public class ObservationsPanel extends JPanel {
 		JList<ObservationData> jList = new JList<>(listModel);
 		jList.setCellRenderer(new ObservationListCellRenderer());
 
-		JScrollPane scrollPane = new JScrollPane(jList);
-		return scrollPane;
+		return new JScrollPane(jList);
 	}
 
 	public JPanel createFilterComboBoxPanel(){
 		JPanel panel = new JPanel(new BorderLayout());
 
-		String[] comboBoxItems = { "Filter 0", "Filter 1" };
-		JComboBox<String> comboBox = new JComboBox<>(comboBoxItems);
+		JComboBox<String> comboBox = new JComboBox<>();
 		comboBox.setEditable(false);
 
-		comboBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e){
-				String cardShowing =  (String) e.getItem();
-				switch(cardShowing){
-					case "Filter 1":
-						updateListModelToCategory("");
-						break;
-				}
-			}
-		});
+		List<String> comboBoxItems = getPossibleFilters();
+		comboBoxItems.add(0, "(choose a filter)");
+		for(String item : comboBoxItems)
+			comboBox.addItem(item);
+
+		comboBox.addItemListener(e -> updateListModelToFilter((String) e.getItem()));
 
 		panel.add(comboBox, BorderLayout.PAGE_START);
 		return panel;
-	}
-
-	public void addObservation(ObservationData obs){
-		listModel.addElement(obs);
 	}
 
 	public void updateListModelToMostRecent(){
 		listModel.removeAllElements();
 		for(ObservationData data : mainView.getAllObservationsSortedByMostRecent()){
 			listModel.addElement(data);
-			// System.out.println(Arrays.toString(data.getCodeNameString()) + " - " + Arrays.toString(data.getCodeString()));
+			// System.out.println(data.getFilters());
 		}
 		// listModel.addAll(mainView.getAllObservationsSortedByMostRecent());
 	}
 
-	public void updateListOfCategories(){
-
+	public List<String> getPossibleFilters(){
+		Set<String> set = new HashSet<>();
+		for(ObservationData data : mainView.getAllObservationsSortedByMostRecent())
+			set.addAll(data.getFilters());
+		return new ArrayList<>(set);
 	}
 
-	public void updateListModelToCategory(String category){
-
-	}
-
-	private enum ObservationCategory {
-
+	public void updateListModelToFilter(String category){
+		listModel.removeAllElements();
+		for(ObservationData data : mainView.getAllObservationsSortedByMostRecent()){
+			if(data.getFilters().contains(category))
+				listModel.addElement(data);
+		}
 	}
 
 	private static class ObservationListCellRenderer extends JLabel implements ListCellRenderer<ObservationData> {
@@ -173,14 +162,14 @@ public class ObservationsPanel extends JPanel {
 			sb.append("<html>");
 			sb.append(value.getDateString());
 			sb.append("<br/");
-			sb.append(value.getCodeNameString()[0]);
+			sb.append(value.getCodeNameString().get(0));
 			sb.append("<br/");
-			sb.append(value.getValueString()[0]);
+			sb.append(value.getValueString().get(0));
 
-			for(int i = 1; i < value.getCodeNameString().length; i++){
-				sb.append(value.getCodeNameString()[i]);
+			for(int i = 1; i < value.getCodeNameString().size(); i++){
+				sb.append(value.getCodeNameString().get(i));
 				sb.append("<br/");
-				sb.append(value.getValueString()[i]);
+				sb.append(value.getValueString().get(i));
 			}
 			setText(sb.toString());
 

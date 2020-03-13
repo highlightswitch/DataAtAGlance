@@ -1,12 +1,14 @@
 package model;
 
+import java.util.List;
+
 public interface ObservationData {
 
-	String[] getCodeNameString();
-	String[] getCodeString();
-	String[] getValueString();
+	List<String> getCodeNameString();
+	List<String> getCodeString();
+	List<String> getValueString();
 	String getDateString();
 
-	String[] getFilters();
+	List<String> getFilters();
 
 }
