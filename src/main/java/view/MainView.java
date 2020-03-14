@@ -6,19 +6,18 @@ import model.ObservationData;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainView extends AppView {
 
 	private ViewController vc;
 
 	private ObservationsPanel obPanel;
-	private TablePanel tPanel;
+	private GraphPanel        gPanel;
 
 	public MainView(ViewController vc){
 		this.vc = vc;
 		this.obPanel = new ObservationsPanel(this);
-		this.tPanel = new TablePanel();
+		this.gPanel = new GraphPanel();
 	}
 
 	public JPanel makePanel(){
@@ -27,7 +26,7 @@ public class MainView extends AppView {
 		JPanel panel = new JPanel(new GridLayout(1,2));
 
 		panel.add(obPanel);
-		panel.add(tPanel);
+		panel.add(gPanel);
 
 		return panel;
 	}

@@ -15,11 +15,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
 
-public class TablePanel extends JPanel {
+public class GraphPanel extends JPanel {
 
 	private TimeSeries series;
 
-	public TablePanel(){
+	public GraphPanel(){
 
 		JFreeChart chart = getChart();
 
