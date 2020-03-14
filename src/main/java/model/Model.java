@@ -92,7 +92,7 @@ public class Model {
 		List<String> docs = DatabaseController.getAllObservationsBySubjectID(id);
 		for(String obsJson : docs){
 			Observation obs = parser.parseResource(Observation.class, obsJson);
-			if(observationHasQuantityValues(obs)){
+			if(observationHasQuantityValues(obs) && notDuplicateObservation(obs)){
 				allCurrentPatientObservations.add(obs);
 			}
 		}
@@ -113,6 +113,30 @@ public class Model {
 		} else{
 			return obs.getValue() instanceof Quantity;
 		}
+	}
+
+	/**
+	 * If the observation has the same code and the same date as an already added
+	 * observation, it returns false.
+	 * This is required since the generated data will sometimes produce two
+	 * observations with different encounters, but otherwise identical elements.
+	 * This is referenced in the following github issue for Synthea:
+	 * https://github.com/synthetichealth/synthea/issues/556
+	 * @param obs
+	 * @return
+	 */
+	private boolean notDuplicateObservation(Observation obs){
+		String code = obs.getCode().getCodingFirstRep().getCode();
+		Date date = obs.getEffectiveDateTimeType().getValue();
+		Observation[] arr = allCurrentPatientObservations.toArray(new Observation[0]);
+
+		boolean found = false;
+		for(int i = 0; i < arr.length && !found; i++){
+			found = arr[i].getCode().getCodingFirstRep().getCode().equals(code)
+					&& arr[i].getEffectiveDateTimeType().getValue().equals(date);
+		}
+
+		return !found;
 	}
 
 	public Vector<String> getAvailableUserNames(){
