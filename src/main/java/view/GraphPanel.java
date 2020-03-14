@@ -1,88 +1,91 @@
 package view;
 
 import model.ObservationData;
-import org.hl7.fhir.r4.model.Observation;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class GraphPanel extends JPanel {
 
-	private ObservationData[] data;
-	private TimeSeries series;
-
-	private JLabel label;
+	private JFreeChart chart;
+	private TimeSeriesCollection collection;
 
 	public GraphPanel(){
-
-		this.label = new JLabel();
-		this.label.setText("text here");
-		this.add(label, BorderLayout.CENTER);
-		// JFreeChart chart = getChart();
-		//
-		// DateAxis axis = new DateAxis("Time");
-		// XYPlot plot = (XYPlot) chart.getPlot();
-		// plot.setDomainAxis(axis);
-		//
-		// JPanel panel = new ChartPanel(chart);
-		// panel.setPreferredSize(new Dimension(400, 600));
-		// this.add(panel);
-
+		JPanel panel = new ChartPanel(createChart());
+		panel.setPreferredSize(new Dimension(400, 600));
+		this.add(panel);
 	}
 
-	public void setLabelText(ObservationData[] datas){
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
-		for(ObservationData data : datas){
-			sb.append(data.getDateString());
-			sb.append("<br/");
+	public void updateData(ObservationData[] datas){
+		//Delete all data points
+		collection.removeAllSeries();
+
+		//Add new data points
+		try{
+			for(ObservationData data : datas){
+				if(data.getIsComposite()){
+					Date date = parseDateWithFormat(data.getDateString(), data.getDateFormat());
+					for(int i = 0; i<data.getValueString().size(); i++){
+						addDataPoint(date,
+									 Double.parseDouble(data.getValueString().get(i)),
+									 data.getCodeNameString().get(i+1));
+					}
+				} else{
+					addDataPoint(parseDateWithFormat(data.getDateString(), data.getDateFormat()),
+								 Double.parseDouble(data.getValueString().get(0)),
+								 data.getCodeNameString().get(0)
+					);
+				}
+			}
+		} catch(ParseException e){
+			e.printStackTrace();
 		}
-		label.setText(sb.toString());
+
+		//Edit title and y-axis name
+		this.chart.setTitle(datas[0].getCodeNameString().get(0));
+		ValueAxis axis = ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		axis.setLabel(datas[0].getUnitString().get(0));
 	}
 
-	private XYDataset createDataset() {
-		TimeSeries series1 = new TimeSeries("Data");
-		Date date0 = new Date(2000, 1, 1);
-		Date date1 = new Date(2000, 2, 1);
-		series1.add(new Day(date0), 46.6);
-		series1.add(new Day(date1), 86.6);
-		TimeSeriesCollection dataset = new TimeSeriesCollection();
-		dataset.addSeries(series1);
-		return dataset;
+
+	private void addDataPoint(Date date, double value, String name){
+		TimeSeries series = collection.getSeries(name);
+		if(series == null){
+			series = new TimeSeries(name);
+			collection.addSeries(series);
+		}
+		series.add(new Day(date), value);
 	}
 
-	private JFreeChart getChart(){
-		series = new TimeSeries("Data");
-		TimeSeriesCollection col = new TimeSeriesCollection();
-		col.addSeries(series);
-		return ChartFactory.createXYLineChart("title", "x", "y", col);
+	private Date parseDateWithFormat(String str, String format) throws ParseException {
+		return new SimpleDateFormat(format).parse(str);
 	}
 
-	// private XYDataset setDataSet(){
-	// 	series1 = new TimeSeries("Data");
-	// 	for(Observation obs : data){
-	// 		Date date = obs.getEffectiveDateTimeType().getValue();
-	// 		series1.add(new Day(date), obs.getValueQuantity().getValue());
-	// 		// System.out.println("Date added: " + date + " - " + obs.getValueQuantity().getValue());
-	// 	}
-	// 	TimeSeriesCollection dataset = new TimeSeriesCollection();
-	// 	dataset.addSeries(series1);
-	// 	return dataset;
-	// }
+	private JFreeChart createChart(){
+		//Create a time series collection
+		this.collection = new TimeSeriesCollection();
 
-	public void addObservation(Observation obs){
-		Date date = obs.getEffectiveDateTimeType().getValue();
-		series.add(new Day(date), obs.getValueQuantity().getValue());
+		//Create a chart pointing to the collection
+		this.chart = ChartFactory.createXYLineChart("title", "x", "y", collection);
+
+		//Set X axis
+		DateAxis axis = new DateAxis("Time");
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.setDomainAxis(axis);
+
+		return chart;
 	}
 
 }

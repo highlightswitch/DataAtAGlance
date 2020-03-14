@@ -4,12 +4,16 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ObservationDataImpl implements ObservationData {
+
+	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
 	private boolean isComposite;
 
@@ -29,7 +33,10 @@ public class ObservationDataImpl implements ObservationData {
 		setFilters(obs);
 	}
 
+	public String getDateFormat(){ return DATE_FORMAT; }
+
 	public boolean getIsComposite(){ return isComposite; }
+
 	public List<String> getCodeNameString(){ return nameString; }
 	public List<String> getCodeString(){ return codeString; }
 	public List<String> getValueString(){ return valueString; }
@@ -73,7 +80,8 @@ public class ObservationDataImpl implements ObservationData {
 	}
 
 	private void setDateString(Observation obs){
-		dateString = obs.getEffectiveDateTimeType().getValue().toString();
+		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+		dateString = df.format(obs.getEffectiveDateTimeType().getValue());
 	}
 
 	private void setFilters(Observation obs){

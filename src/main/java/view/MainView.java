@@ -68,12 +68,9 @@ public class MainView extends AppView {
 		this.selectedObs = data;
 	}
 
-	ObservationData[] getDataForGraph(){
-		return vc.getDataForGraph(selectedObs.getCodeString().get(0)).toArray(new ObservationData[0]);
-	}
-
 	void updateGraph(){
-		gPanel.setLabelText(getDataForGraph());
+		ObservationData[] datas = vc.getDataForGraph(selectedObs.getCodeString().get(0)).toArray(new ObservationData[0]);
+		gPanel.updateData(datas);
 	}
 
 }
