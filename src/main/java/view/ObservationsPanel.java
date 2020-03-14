@@ -108,6 +108,13 @@ public class ObservationsPanel extends JPanel {
 		JList<ObservationData> jList = new JList<>(listModel);
 		jList.setCellRenderer(new ObservationListCellRenderer());
 
+		jList.addListSelectionListener(e -> {
+			if(jList.getSelectedValue() != null){
+				mainView.setSelectedObs(jList.getSelectedValue());
+				mainView.updateGraph();
+			}
+		});
+
 		return new JScrollPane(jList);
 	}
 
@@ -173,15 +180,18 @@ public class ObservationsPanel extends JPanel {
 			sb.append(value.getDateString());
 			sb.append("<br/");
 			sb.append(value.getCodeNameString().get(0));
-			sb.append("<br/");
-			sb.append(value.getValueString().get(0));
-
-			for(int i = 1; i < value.getCodeNameString().size(); i++){
-				sb.append(value.getCodeNameString().get(i));
+			if(!value.getIsComposite()){
 				sb.append("<br/");
-				sb.append(value.getValueString().get(i));
+				sb.append(value.getValueString().get(0)).append(" ").append(value.getUnitString().get(0));
+			} else{
+				for(int i = 0; i<value.getValueString().size(); i++){
+					sb.append("<br/");
+					sb.append(value.getCodeNameString().get(i+1));
+					sb.append("<br/");
+					sb.append(value.getValueString().get(i)).append(" ").append(value.getUnitString().get(i));
+				}
 			}
-			setText(sb.toString());
+			this.setText(sb.toString());
 
 			Color background;
 			Color foreground;

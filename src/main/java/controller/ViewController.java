@@ -121,6 +121,13 @@ public class ViewController {
 		return data;
 	}
 
+	public List<ObservationData> getDataForGraph(String lonicCode){
+		List<ObservationData> data = new ArrayList<>();
+		for(Observation obs : model.getObservationsByLoincCode(lonicCode))
+			data.add(new ObservationDataImpl(obs));
+		return data;
+	}
+
 	public ActionListener getActionListener(String type) {
 		if(type.equals("Menu"))
 			return menu;

@@ -1,6 +1,5 @@
 package model;
 
-import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
@@ -12,62 +11,64 @@ import java.util.Set;
 
 public class ObservationDataImpl implements ObservationData {
 
-	private boolean hasComponent;
+	private boolean isComposite;
 
 	private List<String> nameString;
 	private List<String> codeString;
 	private List<String> valueString;
+	private List<String> unitString;
 	private String dateString;
 
 	private List<String> filters;
 
 	public ObservationDataImpl(Observation obs){
-		this.hasComponent = obs.hasComponent();
+		setIsComposite(obs);
 		setCode(obs);
-		setValueString(obs);
+		setValue(obs);
 		setDateString(obs);
 		setFilters(obs);
 	}
 
+	public boolean getIsComposite(){ return isComposite; }
 	public List<String> getCodeNameString(){ return nameString; }
 	public List<String> getCodeString(){ return codeString; }
 	public List<String> getValueString(){ return valueString; }
+	public List<String> getUnitString(){ return unitString; }
 	public String getDateString(){ return dateString; }
 
 	public List<String> getFilters(){ return filters; }
 
+	public void setIsComposite(Observation obs){
+		this.isComposite = obs.hasComponent();
+	}
+
 	private void setCode(Observation obs){
 		this.nameString = new ArrayList<>();
 		this.codeString = new ArrayList<>();
-		if(hasComponent){
+
+		nameString.add(obs.getCode().getText());
+		codeString.add(obs.getCode().getCodingFirstRep().getCode());
+
+		if(isComposite){
 			for(Observation.ObservationComponentComponent comp : obs.getComponent()){
 				nameString.add(comp.getCode().getText());
 				codeString.add(comp.getCode().getCodingFirstRep().getCode());
 			}
-		} else{
-			nameString.add(obs.getCode().getText());
-			codeString.add(obs.getCode().getCodingFirstRep().getCode());
 		}
 	}
 
-	private void setValueString(Observation obs){
+	private void setValue(Observation obs){
 		this.valueString = new ArrayList<>();
-		if(hasComponent){
+		this.unitString = new ArrayList<>();
+
+		if(isComposite){
 			for(Observation.ObservationComponentComponent comp : obs.getComponent()){
-				StringBuilder sb = new StringBuilder();
-				sb.append(comp.getValueQuantity().getValue().toString());
-				sb.append(comp.getValueQuantity().getUnit());
-				valueString.add(sb.toString());
+				valueString.add(comp.getValueQuantity().getValue().toString());
+				unitString.add(comp.getValueQuantity().getUnit());
 			}
-		} else{
-			StringBuilder sb = new StringBuilder();
-			try{
-				sb.append(obs.getValueQuantity().getValue().toString());
-				sb.append(obs.getValueQuantity().getUnit());
-			} catch(FHIRException e){
-				e.printStackTrace();
-			}
-			valueString.add(sb.toString());
+		} else {
+			valueString.add(obs.getValueQuantity().getValue().toString());
+			unitString.add(obs.getValueQuantity().getUnit());
 		}
 	}
 

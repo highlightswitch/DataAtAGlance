@@ -92,10 +92,26 @@ public class Model {
 		List<String> docs = DatabaseController.getAllObservationsBySubjectID(id);
 		for(String obsJson : docs){
 			Observation obs = parser.parseResource(Observation.class, obsJson);
-			//Only loads in observations that have quantity values
-			if(obs.getValue() instanceof Quantity){
+			if(observationHasQuantityValues(obs)){
 				allCurrentPatientObservations.add(obs);
 			}
+		}
+	}
+
+	/**
+	 * Ensures the observation only has quantity values. If the observation is
+	 * composite, it checks each component.
+	 * @param obs
+	 * @return
+	 */
+	private boolean observationHasQuantityValues(Observation obs){
+		if(obs.hasComponent()){
+			boolean bool = true;
+			for(Observation.ObservationComponentComponent comp : obs.getComponent())
+				bool = bool && comp.getValue() instanceof Quantity;
+			return bool;
+		} else{
+			return obs.getValue() instanceof Quantity;
 		}
 	}
 

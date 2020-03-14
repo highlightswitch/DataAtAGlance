@@ -14,6 +14,8 @@ public class MainView extends AppView {
 	private ObservationsPanel obPanel;
 	private GraphPanel        gPanel;
 
+	private ObservationData selectedObs;
+
 	public MainView(ViewController vc){
 		this.vc = vc;
 		this.obPanel = new ObservationsPanel(this);
@@ -60,6 +62,18 @@ public class MainView extends AppView {
 
 	ObservationData[] getAllObservationsSortedByMostRecent(){
 		return vc.getAllObsData().toArray(new ObservationData[0]);
+	}
+
+	void setSelectedObs(ObservationData data){
+		this.selectedObs = data;
+	}
+
+	ObservationData[] getDataForGraph(){
+		return vc.getDataForGraph(selectedObs.getCodeString().get(0)).toArray(new ObservationData[0]);
+	}
+
+	void updateGraph(){
+		gPanel.setLabelText(getDataForGraph());
 	}
 
 }

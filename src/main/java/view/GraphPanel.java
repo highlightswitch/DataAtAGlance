@@ -1,5 +1,6 @@
 package view;
 
+import model.ObservationData;
 import org.hl7.fhir.r4.model.Observation;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -17,20 +18,36 @@ import java.util.Date;
 
 public class GraphPanel extends JPanel {
 
+	private ObservationData[] data;
 	private TimeSeries series;
+
+	private JLabel label;
 
 	public GraphPanel(){
 
-		JFreeChart chart = getChart();
+		this.label = new JLabel();
+		this.label.setText("text here");
+		this.add(label, BorderLayout.CENTER);
+		// JFreeChart chart = getChart();
+		//
+		// DateAxis axis = new DateAxis("Time");
+		// XYPlot plot = (XYPlot) chart.getPlot();
+		// plot.setDomainAxis(axis);
+		//
+		// JPanel panel = new ChartPanel(chart);
+		// panel.setPreferredSize(new Dimension(400, 600));
+		// this.add(panel);
 
-		DateAxis axis = new DateAxis("Time");
-		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setDomainAxis(axis);
+	}
 
-		JPanel panel = new ChartPanel(chart);
-		panel.setPreferredSize(new Dimension(400, 600));
-		this.add(panel);
-
+	public void setLabelText(ObservationData[] datas){
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
+		for(ObservationData data : datas){
+			sb.append(data.getDateString());
+			sb.append("<br/");
+		}
+		label.setText(sb.toString());
 	}
 
 	private XYDataset createDataset() {
