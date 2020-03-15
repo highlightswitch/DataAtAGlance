@@ -24,7 +24,7 @@ public class MainController {
 
 		if(DatabaseController.ensureDatabaseConnection()){
 			setupShutdownHook();
-			this.view.start();
+			this.view.startWithFakeLogin();
 
 		} else {
 			System.out.println("----");

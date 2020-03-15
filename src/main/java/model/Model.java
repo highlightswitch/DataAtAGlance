@@ -5,6 +5,8 @@ import ca.uhn.fhir.parser.IParser;
 import controller.DatabaseController;
 import org.hl7.fhir.r4.model.*;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 public class Model {
@@ -71,15 +73,23 @@ public class Model {
 
 	public void fakeLogin(){
 		currentLoggedInPatient = new Patient().addName(new HumanName().addPrefix("Mr.").addGiven("Elliot").setFamily("Alderson"));
-		addFakeObservations(20);
+		addFakeObservations(10);
 	}
 
 	public void addFakeObservations(int quantity){
 		for(int i = 0; i < quantity; i++){
 			Observation obs = new Observation();
-			obs.setCode(new CodeableConcept().setText("Body Height"));
+
+			CodeableConcept concept = new CodeableConcept().setText("Body Height");
+			concept.getCodingFirstRep().setCode("8302-2");
+			concept.getCodingFirstRep().setSystem("http://loinc.org");
+			obs.setCode(concept);
+
 			obs.setValue(new Quantity().setValue(181 + i).setUnit("cm"));
-			obs.setEffective(new DateTimeType(new Date(2020, Calendar.JANUARY, 1 + i)));
+
+			LocalDate date = LocalDate.of(2020, Month.MARCH, 15 + i);
+			obs.setEffective(new DateTimeType(java.sql.Date.valueOf(date)));
+
 			allCurrentPatientObservations.add(obs);
 		}
 	}

@@ -1,5 +1,7 @@
 package view;
 
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 import model.ObservationData;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -12,9 +14,12 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class GraphPanel extends JPanel {
@@ -22,41 +27,109 @@ public class GraphPanel extends JPanel {
 	private JFreeChart chart;
 	private TimeSeriesCollection collection;
 
+	private ObservationData[] displayedData;
+	private LocalDate fromDate;
+	private LocalDate toDate;
+
 	public GraphPanel(){
-		JPanel panel = new ChartPanel(createChart());
-		panel.setPreferredSize(new Dimension(400, 600));
-		this.add(panel);
+
+		this.setLayout(new BorderLayout());
+
+		JPanel chartPanel = new ChartPanel(createChart());
+		chartPanel.setPreferredSize(new Dimension(400, 600));
+
+		this.add(createDatePickerPanel(), BorderLayout.PAGE_START);
+		this.add(chartPanel);
 	}
 
-	public void updateData(ObservationData[] datas){
-		//Delete all data points
-		collection.removeAllSeries();
+	private JPanel createDatePickerPanel(){
+		JPanel outer = new JPanel(new GridLayout(2,1));
+		outer.setBorder(new EmptyBorder(5,10,5,10));
 
-		//Add new data points
-		try{
-			for(ObservationData data : datas){
-				if(data.getIsComposite()){
-					Date date = parseDateWithFormat(data.getDateString(), data.getDateFormat());
-					for(int i = 0; i<data.getValueString().size(); i++){
-						addDataPoint(date,
-									 Double.parseDouble(data.getValueString().get(i)),
-									 data.getCodeNameString().get(i+1));
+		JPanel from = new JPanel(new BorderLayout());
+		DatePicker fromDatePicker = createDatePicker();
+		fromDatePicker.addDateChangeListener(e -> {
+			System.out.println("ping");
+			fromDate = e.getNewDate();
+			updateData(displayedData);
+		});
+		from.add(new JLabel("From :"));
+		from.add(fromDatePicker, BorderLayout.PAGE_END);
+
+		JPanel to = new JPanel(new BorderLayout());
+		DatePicker toDatePicker = createDatePicker();
+		toDatePicker.addDateChangeListener(e -> {
+			System.out.println("ping");
+			toDate = e.getNewDate();
+			updateData(displayedData);
+		});
+		to.add(new JLabel("To :"));
+		to.add(toDatePicker, BorderLayout.PAGE_END);
+
+		outer.add(from);
+		outer.add(to);
+
+		return outer;
+	}
+
+	private DatePicker createDatePicker(){
+
+		DatePickerSettings settings = new DatePickerSettings();
+		settings.setAllowKeyboardEditing(false);
+		DatePicker datePicker = new DatePicker(settings);
+
+		JButton button = datePicker.getComponentToggleCalendarButton();
+		URL dateImageURL = GraphPanel.class.getResource("/images/datepickerbutton1.png");
+		Image image = Toolkit.getDefaultToolkit().getImage(dateImageURL);
+		ImageIcon icon = new ImageIcon(image);
+		button.setText("");
+		button.setIcon(icon);
+
+		return datePicker;
+	}
+
+	public void updateData(ObservationData[] data){
+		if(data != null){
+			//Delete all data points
+			collection.removeAllSeries();
+
+			//Set data
+			this.displayedData = data;
+
+			//Add new data points
+			try{
+				for(ObservationData obs : data){
+					if(obs.getIsComposite()){
+						Date date = parseDateWithFormat(obs.getDateString(), obs.getDateFormat());
+						for(int i = 0; i<obs.getValueString().size(); i++){
+							addDataPoint(date,
+										 Double.parseDouble(obs.getValueString().get(i)),
+										 obs.getCodeNameString().get(i + 1));
+						}
+					}else{
+						addDataPoint(parseDateWithFormat(obs.getDateString(), obs.getDateFormat()),
+									 Double.parseDouble(obs.getValueString().get(0)),
+									 obs.getCodeNameString().get(0)
+						);
 					}
-				} else{
-					addDataPoint(parseDateWithFormat(data.getDateString(), data.getDateFormat()),
-								 Double.parseDouble(data.getValueString().get(0)),
-								 data.getCodeNameString().get(0)
-					);
 				}
+			}catch(ParseException e){
+				e.printStackTrace();
 			}
-		} catch(ParseException e){
-			e.printStackTrace();
-		}
 
-		//Edit title and y-axis name
-		this.chart.setTitle(datas[0].getCodeNameString().get(0));
-		ValueAxis axis = ((XYPlot) this.chart.getPlot()).getRangeAxis();
-		axis.setLabel(datas[0].getUnitString().get(0));
+			//Cut x-axis to dates
+			if(fromDate!=null && toDate!=null){
+				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis()).setMinimumDate(java.sql.Date.valueOf(fromDate));
+				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis()).setMaximumDate(java.sql.Date.valueOf(toDate));
+			} else {
+				((XYPlot)chart.getPlot()).getDomainAxis().setAutoRange(true);
+			}
+
+			//Edit title and y-axis name
+			this.chart.setTitle(data[0].getCodeNameString().get(0));
+			ValueAxis axis = ((XYPlot) this.chart.getPlot()).getRangeAxis();
+			axis.setLabel(data[0].getUnitString().get(0));
+		}
 	}
 
 
