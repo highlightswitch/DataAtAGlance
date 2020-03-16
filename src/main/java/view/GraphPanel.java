@@ -7,6 +7,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
@@ -117,13 +118,20 @@ public class GraphPanel extends JPanel {
 				e.printStackTrace();
 			}
 
-			//Cut x-axis to dates
+			//Scale x-axis to dates
 			if(fromDate!=null && toDate!=null){
 				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis()).setMinimumDate(java.sql.Date.valueOf(fromDate));
 				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis()).setMaximumDate(java.sql.Date.valueOf(toDate));
 			} else {
 				((XYPlot)chart.getPlot()).getDomainAxis().setAutoRange(true);
 			}
+
+			//Auto scale y-axis
+			((NumberAxis) ((XYPlot) chart.getPlot()).getRangeAxis()).setAutoRangeIncludesZero(false);
+			((XYPlot) chart.getPlot()).getRangeAxis().setAutoRange(true);
+
+			//Check if there is data between the dates
+			//TODO: if there is no data between the dates, tell user
 
 			//Edit title and y-axis name
 			this.chart.setTitle(data[0].getCodeNameString().get(0));
