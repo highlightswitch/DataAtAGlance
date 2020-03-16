@@ -10,7 +10,7 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -210,6 +210,9 @@ public class VisualPanel extends JPanel {
 		DateAxis axis = new DateAxis("Time");
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setDomainAxis(axis);
+
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+		renderer.setDefaultShapesVisible(true);
 
 		return chart;
 	}
