@@ -10,6 +10,7 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -23,24 +24,27 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class GraphPanel extends JPanel {
+public class VisualPanel extends JPanel {
 
 	private JFreeChart chart;
 	private TimeSeriesCollection collection;
 
-	private ObservationData[] displayedData;
-	private LocalDate fromDate;
-	private LocalDate toDate;
+	private ObservationData[] allDisplayableData;
+	private LocalDate         fromDate;
+	private LocalDate         toDate;
 
-	public GraphPanel(){
+	private DefaultListModel<ObservationData> listModel;
+
+	public VisualPanel(){
 
 		this.setLayout(new BorderLayout());
 
-		JPanel chartPanel = new ChartPanel(createChart());
-		chartPanel.setPreferredSize(new Dimension(400, 600));
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add("Graph", createGraphPanel());
+		tabbedPane.add("List", createListPanel());
 
 		this.add(createDatePickerPanel(), BorderLayout.PAGE_START);
-		this.add(chartPanel);
+		this.add(tabbedPane);
 	}
 
 	private JPanel createDatePickerPanel(){
@@ -52,7 +56,7 @@ public class GraphPanel extends JPanel {
 		fromDatePicker.addDateChangeListener(e -> {
 			System.out.println("ping");
 			fromDate = e.getNewDate();
-			updateData(displayedData);
+			updateData(allDisplayableData);
 		});
 		from.add(new JLabel("From :"));
 		from.add(fromDatePicker, BorderLayout.PAGE_END);
@@ -62,7 +66,7 @@ public class GraphPanel extends JPanel {
 		toDatePicker.addDateChangeListener(e -> {
 			System.out.println("ping");
 			toDate = e.getNewDate();
-			updateData(displayedData);
+			updateData(allDisplayableData);
 		});
 		to.add(new JLabel("To :"));
 		to.add(toDatePicker, BorderLayout.PAGE_END);
@@ -80,7 +84,7 @@ public class GraphPanel extends JPanel {
 		DatePicker datePicker = new DatePicker(settings);
 
 		JButton button = datePicker.getComponentToggleCalendarButton();
-		URL dateImageURL = GraphPanel.class.getResource("/images/datepickerbutton1.png");
+		URL dateImageURL = VisualPanel.class.getResource("/images/datepickerbutton1.png");
 		Image image = Toolkit.getDefaultToolkit().getImage(dateImageURL);
 		ImageIcon icon = new ImageIcon(image);
 		button.setText("");
@@ -89,13 +93,34 @@ public class GraphPanel extends JPanel {
 		return datePicker;
 	}
 
+	private JPanel createGraphPanel(){
+		JPanel panel = new ChartPanel(createChart());
+		panel.setPreferredSize(new Dimension(400, 600));
+		return panel;
+	}
+
+	private JPanel createListPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setPreferredSize(new Dimension(400, 600));
+
+		this.listModel = new DefaultListModel<>();
+
+		JList<ObservationData> jList = new JList<>(listModel);
+		jList.setCellRenderer(new ObservationListCellRenderer());
+		JScrollPane scrollPane = new JScrollPane(jList);
+
+		panel.add(scrollPane);
+		return panel;
+	}
+
 	public void updateData(ObservationData[] data){
 		if(data != null){
 			//Delete all data points
 			collection.removeAllSeries();
+			listModel.removeAllElements();
 
 			//Set data
-			this.displayedData = data;
+			this.allDisplayableData = data;
 
 			//Add new data points
 			try{
@@ -118,12 +143,32 @@ public class GraphPanel extends JPanel {
 				e.printStackTrace();
 			}
 
-			//Scale x-axis to dates
+			//If two dates are set
 			if(fromDate!=null && toDate!=null){
-				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis()).setMinimumDate(java.sql.Date.valueOf(fromDate));
-				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis()).setMaximumDate(java.sql.Date.valueOf(toDate));
+				//Scale x-axis to dates
+				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis())
+						.setMinimumDate(convertDate(fromDate));
+				((DateAxis) ((XYPlot) chart.getPlot()).getDomainAxis())
+						.setMaximumDate(convertDate(toDate));
+
+				//Add data to the list if it is between the dates
+				for(ObservationData d : data){
+					try{
+						LocalDate dateOfDataPoint = convertDate(parseDateWithFormat(d.getDateString(), d.getDateFormat()));
+						if((dateOfDataPoint.isAfter(fromDate) || dateOfDataPoint.isEqual(fromDate))
+								&& (dateOfDataPoint.isBefore(toDate)) || dateOfDataPoint.isEqual(toDate))
+							listModel.addElement(d);
+					} catch(ParseException e){
+						System.out.println("Parse error");
+					}
+				}
 			} else {
+				//Set x-axis to auto scale
 				((XYPlot)chart.getPlot()).getDomainAxis().setAutoRange(true);
+
+				//Add data to the list
+				for(ObservationData d : data)
+					listModel.addElement(d);
 			}
 
 			//Auto scale y-axis
@@ -167,6 +212,14 @@ public class GraphPanel extends JPanel {
 		plot.setDomainAxis(axis);
 
 		return chart;
+	}
+
+	private Date convertDate(LocalDate date){
+		return java.sql.Date.valueOf(date);
+	}
+
+	private LocalDate convertDate(Date date){
+		return new java.sql.Date(date.getTime()).toLocalDate();
 	}
 
 }

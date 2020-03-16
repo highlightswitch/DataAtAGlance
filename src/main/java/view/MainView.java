@@ -12,14 +12,14 @@ public class MainView extends AppView {
 	private ViewController vc;
 
 	private ObservationsPanel obPanel;
-	private GraphPanel        gPanel;
+	private VisualPanel       gPanel;
 
 	private ObservationData selectedObs;
 
 	public MainView(ViewController vc){
 		this.vc = vc;
 		this.obPanel = new ObservationsPanel(this);
-		this.gPanel = new GraphPanel();
+		this.gPanel = new VisualPanel();
 	}
 
 	public JPanel makePanel(){
