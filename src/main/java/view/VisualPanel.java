@@ -54,7 +54,6 @@ public class VisualPanel extends JPanel {
 		JPanel from = new JPanel(new BorderLayout());
 		DatePicker fromDatePicker = createDatePicker();
 		fromDatePicker.addDateChangeListener(e -> {
-			System.out.println("ping");
 			fromDate = e.getNewDate();
 			updateData(allDisplayableData);
 		});
@@ -64,7 +63,6 @@ public class VisualPanel extends JPanel {
 		JPanel to = new JPanel(new BorderLayout());
 		DatePicker toDatePicker = createDatePicker();
 		toDatePicker.addDateChangeListener(e -> {
-			System.out.println("ping");
 			toDate = e.getNewDate();
 			updateData(allDisplayableData);
 		});
