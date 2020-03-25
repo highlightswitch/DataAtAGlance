@@ -5,26 +5,23 @@ import model.Model;
 public class MainController {
 
 	private static MainController _INSTANCE;
-	public static MainController get(){
+	public static void start(){
 		if(_INSTANCE== null)
 			_INSTANCE = new MainController();
-		return _INSTANCE;
 	}
-
-	private Model model;
-	private ViewController view;
-
-	private final String defaultPatientID = "urn:uuid:284dac2a-bc05-4633-84b5-21cd31b9fc70";
 
 	private MainController(){
 
-		//Create model
-		this.model = new Model();
-		this.view = new ViewController(model, "defaultUsername");
+		//Create model and view
+		Model model = new Model();
+		ViewController view = new ViewController(model, "defaultUsername");
 
-		if(DatabaseController.ensureDatabaseConnection()){
-			setupShutdownHook();
-			this.view.start();
+		if(DB.get().ensureDatabaseConnection()){
+			//On shutdown, close database connection
+			Runtime.getRuntime().addShutdownHook(new Thread(DB.get()::closeDatabaseConnection));
+
+			//Start the view
+			view.start();
 
 		} else {
 			System.out.println("----");
@@ -32,11 +29,6 @@ public class MainController {
 			System.out.println("----");
 		}
 
-	}
-
-	private void setupShutdownHook( ){
-		//On shutdown, close database connection
-		Runtime.getRuntime().addShutdownHook(new Thread(DB::close));
 	}
 
 }

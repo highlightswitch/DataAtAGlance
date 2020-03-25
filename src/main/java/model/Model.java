@@ -2,7 +2,7 @@ package model;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import controller.DatabaseController;
+import controller.DB;
 import org.hl7.fhir.r4.model.*;
 
 import java.time.LocalDate;
@@ -14,7 +14,6 @@ public class Model {
 	//Alfonso has 6000+ obs
 
 	private final FhirContext _CONTEXT = FhirContext.forR4();
-
 	private final String[] patientIDs = new String[]{
 			"urn:uuid:7268261c-8c61-44b4-8704-e3cf3f5eb555",
 			"urn:uuid:5bb919d8-78fe-4423-867c-b4d81d67aae5",
@@ -50,7 +49,7 @@ public class Model {
 	private void setNameIDMaps(){
 		this.mapIdToName = new HashMap<>();
 		this.mapNameToId = new HashMap<>();
-		String[] patientJsons = DatabaseController.getJSONDocumentsByID("patients", patientIDs);
+		String[] patientJsons = DB.get().getJSONDocumentsByID("patients", patientIDs);
 		for(String json : patientJsons){
 			IParser parser = _CONTEXT.newJsonParser();
 			Patient patient = parser.parseResource(Patient.class, json);
@@ -96,10 +95,10 @@ public class Model {
 
 	private void loadPatientWithId(String id){
 		IParser parser = _CONTEXT.newJsonParser();
-		String patientJson = DatabaseController.getJSONDocumentByID("patients", id);
+		String patientJson = DB.get().getJSONDocumentByID("patients", id);
 		currentLoggedInPatient = parser.parseResource(Patient.class, patientJson);
 
-		List<String> docs = DatabaseController.getAllObservationsBySubjectID(id);
+		List<String> docs = DB.get().getAllObservationsBySubjectID(id);
 		for(String obsJson : docs){
 			Observation obs = parser.parseResource(Observation.class, obsJson);
 			if(observationHasQuantityValues(obs) && notDuplicateObservation(obs)){
