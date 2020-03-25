@@ -4,14 +4,10 @@ import java.util.List;
 
 public interface IDatabase {
 
-	boolean ensureDatabaseConnection();
-
-	String getJSONDocumentByID(String collection, String id);
-
-	String[] getJSONDocumentsByID(String collection, String[] ids);
-
-	List<String> getAllObservationsBySubjectID(String id);
-
+	boolean ensureValidDatabaseConnection();
 	void closeDatabaseConnection();
+
+	List<String> getPatientsByPatientIDs(String[] ids);
+	List<String> getAllObservationsBySubjectID(String id);
 
 }

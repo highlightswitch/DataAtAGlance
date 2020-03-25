@@ -16,7 +16,7 @@ public class MainController {
 		Model model = new Model();
 		ViewController view = new ViewController(model, "defaultUsername");
 
-		if(DB.get().ensureDatabaseConnection()){
+		if(DB.get().ensureValidDatabaseConnection()){
 			//On shutdown, close database connection
 			Runtime.getRuntime().addShutdownHook(new Thread(DB.get()::closeDatabaseConnection));
 

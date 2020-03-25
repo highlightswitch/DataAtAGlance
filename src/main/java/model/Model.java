@@ -49,7 +49,7 @@ public class Model {
 	private void setNameIDMaps(){
 		this.mapIdToName = new HashMap<>();
 		this.mapNameToId = new HashMap<>();
-		String[] patientJsons = DB.get().getJSONDocumentsByID("patients", patientIDs);
+		List<String> patientJsons = DB.get().getPatientsByPatientIDs(patientIDs);
 		for(String json : patientJsons){
 			IParser parser = _CONTEXT.newJsonParser();
 			Patient patient = parser.parseResource(Patient.class, json);
@@ -95,7 +95,7 @@ public class Model {
 
 	private void loadPatientWithId(String id){
 		IParser parser = _CONTEXT.newJsonParser();
-		String patientJson = DB.get().getJSONDocumentByID("patients", id);
+		String patientJson = DB.get().getPatientsByPatientIDs(new String[]{id}).get(0);
 		currentLoggedInPatient = parser.parseResource(Patient.class, patientJson);
 
 		List<String> docs = DB.get().getAllObservationsBySubjectID(id);

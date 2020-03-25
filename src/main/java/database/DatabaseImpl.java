@@ -1,10 +1,11 @@
 package database;
 
+import controller.IDatabase;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import controller.IDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -15,7 +16,9 @@ import static com.mongodb.client.model.Filters.or;
 
 public class DatabaseImpl implements IDatabase {
 
-	private final String uri = "mongodb://admin:admin@cluster0-shard-00-00-nofrp.mongodb.net:27017,cluster0-shard-00-01-nofrp.mongodb.net:27017,cluster0-shard-00-02-nofrp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority";
+	private final String uri = "mongodb://admin:admin@cluster0-shard-00-00-nofrp.mongodb.net:27017," +
+			"cluster0-shard-00-01-nofrp.mongodb.net:27017," +
+			"cluster0-shard-00-02-nofrp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority";
 
 	private MongoClient MONGO;
 
@@ -28,7 +31,7 @@ public class DatabaseImpl implements IDatabase {
 	}
 
 	@Override
-	public boolean ensureDatabaseConnection(){
+	public boolean ensureValidDatabaseConnection(){
 		try{
 			getDB();
 		} catch(ExceptionInInitializerError e){
@@ -38,20 +41,12 @@ public class DatabaseImpl implements IDatabase {
 	}
 
 	@Override
-	public String getJSONDocumentByID(String collection, String id){
-
-		Document doc =  getDB()
-				.getCollection(collection)
-				.find(eq("_id", id))
-				.first();
-
-		if(doc != null)
-			return doc.toJson();
-		return null;
+	public void closeDatabaseConnection( ){
+		this.MONGO.close();
 	}
 
 	@Override
-	public String[] getJSONDocumentsByID(String collection, String[] ids){
+	public List<String> getPatientsByPatientIDs(String[] ids){
 
 		//Create the query that gets all the documents by the given ids
 		Bson query;
@@ -67,16 +62,16 @@ public class DatabaseImpl implements IDatabase {
 
 		//Get a list of all the documents
 		MongoCursor<Document> it =  getDB()
-				.getCollection(collection)
+				.getCollection("patients")
 				.find(query)
 				.iterator();
 
 		//Convert those documents into json strings
-		Vector<String> jsons = new Vector<>();
+		List<String> jsons = new Vector<>();
 		while(it.hasNext())
 			jsons.add(it.next().toJson());
 
-		return jsons.toArray(new String[0]);
+		return jsons;
 	}
 
 	@Override
@@ -92,11 +87,6 @@ public class DatabaseImpl implements IDatabase {
 			docs.add(it.next().toJson());
 
 		return docs;
-	}
-
-	@Override
-	public void closeDatabaseConnection( ){
-		this.MONGO.close();
 	}
 
 }
